@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Task Demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link rel="stylesheet" type="text/css"
+          href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+</head>
+<style>
+    table {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    table td, table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    table tr:hover {
+        background-color: #ddd;
+    }
+
+    table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #04AA6D;
+        color: white;
+    }
+</style>
+<body>
+
+<div class="container" style="min-height: 500px">
+
+    <div class="starter-template">
+        <h1 class="text-center" th:text="${title}"></h1>
+
+        <form class="form-horizontal" id="formData">
+            <div class="form-group form-group-lg">
+                <label for="employeeId" class="col-sm-2 control-label">Employee</label>
+                <div class="col-sm-6">
+                    <select class="form-control" id="employeeId" th:field="*{employees}">
+                        <option th:each="employee: ${employees}"
+                                th:value="${employee.id}"
+                                th:text="${employee.getFullName()}"/>
+                    </select></div>
+            </div>
+
+
+            <div class="form-group form-group-lg">
+                <label for="customerId" class="col-sm-2 control-label">Customer</label>
+                <div class="col-sm-6">
+                    <select class="form-control" id="customerId" th:field="*{customers}">
+                        <option th:each="customer: ${customers}"
+                                th:value="${customer.id}"
+                                th:text="${customer.getFullName()}"/>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-6">
+                    <button type="submit" id="btn"
+                            class="btn btn-success btn-lg">Start
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div id="feedback"></div>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="form-group form-group-lg">
+            <label for="customerId" class="col-sm-2 control-label">Customer</label>
+            <div class="col-sm-6">
+                <select class="form-control" id="customerId2" th:field="*{customers}">
+                    <option th:each="customer: ${customers}"
+                            th:value="${customer.id}"
+                            th:text="${customer.getFullName()}"/>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-6">
+                <button id="replayButton"
+                        class="btn btn-success btn-lg">Reply
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript"
+        src="webjars/jquery/2.2.4/jquery.min.js"></script>
+
+<script type="text/javascript" src="js/ajax.js"></script>
+
+</body>
+</html>
