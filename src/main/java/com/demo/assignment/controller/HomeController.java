@@ -7,6 +7,7 @@ import com.demo.assignment.service.EmployeeService;
 import com.demo.assignment.service.NotificationService;
 import com.demo.assignment.utile.Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
+    private final Environment env;
 
     private final CustomerService customerService;
     private final EmployeeService employeeService;
@@ -48,8 +50,8 @@ public class HomeController {
     public AjaxResponseDTO ajaxRequestSendNotification(@RequestBody AjaxRequestDTO ajaxRequestDTO) {
         EmployeeDTO employee = employeeService.getById(ajaxRequestDTO.getEmployeeId());
         CustomerDTO customer = customerService.getById(ajaxRequestDTO.getCustomerId());
-        Notification notification = notificationService.saveNotification(employee, customer, "Notification Email Body sample here ");
-        Constants.CURRENT_CUSTOMERS_PROCESS.put(customer.getId(), new NotificationDTO(notification));
+        Notification notification = notificationService.saveNotification(employee, customer, (env.getProperty("demo.body1")));
+        Constants.CURRENT_CUSTOMERS_PROCESS.put(customer.getId(), new NotificationTemplate(new NotificationDTO(notification), 2));
         return new AjaxResponseDTO(notificationService.getAllNotifications());
     }
 
@@ -57,10 +59,10 @@ public class HomeController {
     @ResponseBody
     public AjaxResponseDTO ajaxRequestReplyNotification(@RequestBody AjaxRequestDTO ajaxRequestDTO) {
         CustomerDTO customer = customerService.getById(ajaxRequestDTO.getCustomerId());
-        NotificationDTO notificationDTO = Constants.CURRENT_CUSTOMERS_PROCESS.get(customer.getId());
+        NotificationDTO notificationDTO = Constants.CURRENT_CUSTOMERS_PROCESS.get(customer.getId()).getNotificationDTO();
         if (notificationDTO != null) {
             Constants.CURRENT_CUSTOMERS_PROCESS.remove(ajaxRequestDTO.getCustomerId());
-            notificationDTO.setBody("Replay From Customer Notification Email Body sample here");
+            notificationDTO.setBody(env.getProperty("demo.reply"));
             notificationDTO.setLocalDateTime(LocalDateTime.now());
             Notification notification = notificationDTO.getNotificationEntity(customer.getCustomerEntity());
             notificationService.saveNotification(notification);

@@ -24,5 +24,8 @@ fixedDelay:
   in:
     milliseconds: 20000
 demo:
-  body: This is the message, I am tring to reach out, I hoper you
+  body1: First Templet Hi how can i help you
+  body2: Second Templet do you still avaibale
+  body3: Third templet please let me know how can help you
+  reply: Thank you for your email the issue was solved
 

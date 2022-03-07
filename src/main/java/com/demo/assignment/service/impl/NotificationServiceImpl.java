@@ -3,6 +3,7 @@ package com.demo.assignment.service.impl;
 import com.demo.assignment.dto.CustomerDTO;
 import com.demo.assignment.dto.EmployeeDTO;
 import com.demo.assignment.dto.NotificationDTO;
+import com.demo.assignment.dto.NotificationTemplate;
 import com.demo.assignment.model.Customer;
 import com.demo.assignment.model.Notification;
 import com.demo.assignment.repository.CustomerRepository;
@@ -10,6 +11,7 @@ import com.demo.assignment.repository.NotificationRepository;
 import com.demo.assignment.service.NotificationService;
 import com.demo.assignment.utile.Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,6 +28,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final CustomerRepository customerRepository;
+    private final Environment env;
 
     @Override
     public Notification saveNotification(EmployeeDTO employee, CustomerDTO customer, String body) {
@@ -54,10 +57,16 @@ public class NotificationServiceImpl implements NotificationService {
     public void scheduleFixedDelayTask() {
         for (Long customerId : Constants.CURRENT_CUSTOMERS_PROCESS.keySet()) {
             Customer customer = customerRepository.findById(customerId);
-            NotificationDTO notificationDTO = Constants.CURRENT_CUSTOMERS_PROCESS.get(customerId);
+            NotificationTemplate notificationTemplate = Constants.CURRENT_CUSTOMERS_PROCESS.get(customerId);
+            NotificationDTO notificationDTO = notificationTemplate.getNotificationDTO();
+            notificationDTO.setBody(env.getProperty("demo.body" + notificationTemplate.getTemplateNumber()));
             Notification notification = notificationDTO.getNotificationEntity(customer);
             notification.setLocalDateTime(LocalDateTime.now());
             notificationRepository.save(notification);
+            notificationTemplate.increaseValueByOne();
+            if(notificationTemplate.getTemplateNumber()>=4){
+                Constants.CURRENT_CUSTOMERS_PROCESS.remove(customerId);
+            }
         }
     }
 
