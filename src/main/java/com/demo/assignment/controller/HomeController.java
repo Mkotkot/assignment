@@ -50,23 +50,41 @@ public class HomeController {
     public AjaxResponseDTO ajaxRequestSendNotification(@RequestBody AjaxRequestDTO ajaxRequestDTO) {
         EmployeeDTO employee = employeeService.getById(ajaxRequestDTO.getEmployeeId());
         CustomerDTO customer = customerService.getById(ajaxRequestDTO.getCustomerId());
-        Notification notification = notificationService.saveNotification(employee, customer, (env.getProperty("demo.body1")));
-        Constants.CURRENT_CUSTOMERS_PROCESS.put(customer.getId(), new NotificationTemplate(new NotificationDTO(notification), 2));
+        Notification notification = notificationService.saveNotification(employee, customer, (env.getProperty("demo.body.default1")));
+        Constants.CURRENT_CUSTOMERS_PROCESS.remove(ajaxRequestDTO.getCustomerId());
+        Constants.CURRENT_CUSTOMERS_PROCESS.put(customer.getId(), new NotificationTemplate(new NotificationDTO(notification), 2, LayerType.DEFAULT));
         return new AjaxResponseDTO(notificationService.getAllNotifications());
     }
 
     @PostMapping("/reply")
     @ResponseBody
-    public AjaxResponseDTO ajaxRequestReplyNotification(@RequestBody AjaxRequestDTO ajaxRequestDTO) {
+    public AjaxResponseDTO ajaxRequestReplyNotificationDefault(@RequestBody AjaxRequestDTO ajaxRequestDTO) {
         CustomerDTO customer = customerService.getById(ajaxRequestDTO.getCustomerId());
-        NotificationDTO notificationDTO = Constants.CURRENT_CUSTOMERS_PROCESS.get(customer.getId()).getNotificationDTO();
-        if (notificationDTO != null) {
+        NotificationTemplate notificationTemplate = Constants.CURRENT_CUSTOMERS_PROCESS.get(customer.getId());
+        NotificationDTO notificationDTO = notificationTemplate.getNotificationDTO();
+        if (ajaxRequestDTO.getLayerType().equalsIgnoreCase(notificationTemplate.getLayerType().name())) {
+            if (notificationDTO != null) {
+                Constants.CURRENT_CUSTOMERS_PROCESS.remove(ajaxRequestDTO.getCustomerId());
+                notificationDTO.setBody(env.getProperty("demo.reply." + notificationTemplate.getLayerType().name().toLowerCase()));
+                notificationDTO.setLocalDateTime(LocalDateTime.now());
+                Notification notification = notificationDTO.getNotificationEntity(customer.getCustomerEntity());
+                notification.setId(null);
+                notificationService.saveNotification(notification);
+            }
+        } else {
             Constants.CURRENT_CUSTOMERS_PROCESS.remove(ajaxRequestDTO.getCustomerId());
-            notificationDTO.setBody(env.getProperty("demo.reply"));
             notificationDTO.setLocalDateTime(LocalDateTime.now());
+            notificationTemplate.setTemplateNumber(1);
+            notificationTemplate.setLayerType(LayerType.valueOf(ajaxRequestDTO.getLayerType().toUpperCase()));
+            notificationDTO.setBody(env.getProperty("demo.reply." + notificationTemplate.getLayerType().name().toLowerCase()));
+            notificationDTO.setLocalDateTime(LocalDateTime.now());
+            notificationTemplate.setNotificationDTO(notificationDTO);
+            Constants.CURRENT_CUSTOMERS_PROCESS.put(ajaxRequestDTO.getCustomerId(), notificationTemplate);
             Notification notification = notificationDTO.getNotificationEntity(customer.getCustomerEntity());
+            notification.setId(null);
             notificationService.saveNotification(notification);
         }
+
         return new AjaxResponseDTO(notificationService.getAllNotifications());
     }
 

@@ -87,12 +87,73 @@ $(document).ready(function () {
 
     });
 
-    $("#replayButton").click(function (event) {
+    $("#replayButtonDefault").click(function (event) {
 
         event.preventDefault();
 
         let dataPram = {}
         dataPram["employeeId"] = $("#employeeId").val();
+        dataPram["layerType"] = "DEFAULT";
+        dataPram["customerId"] = $("#customerId2").val();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/reply",
+            data: JSON.stringify(dataPram),
+            dataType: 'json',
+            cache: false,
+            timeout: 600000,
+            "success": function (data) {
+                let json = JSON.stringify(data, null, 4);
+                $('#feedback').html(createTable(json));
+            },
+            "error": function (e) {
+                let json = "Ajax Error" + e.responseText;
+                $('#feedback').html(json);
+
+            }
+        });
+
+    });
+
+    $("#replayButtonSupport").click(function (event) {
+
+        event.preventDefault();
+
+        let dataPram = {}
+        dataPram["employeeId"] = $("#employeeId").val();
+        dataPram["layerType"] = "SUPPORT";
+        dataPram["customerId"] = $("#customerId2").val();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/reply",
+            data: JSON.stringify(dataPram),
+            dataType: 'json',
+            cache: false,
+            timeout: 600000,
+            "success": function (data) {
+                let json = JSON.stringify(data, null, 4);
+                $('#feedback').html(createTable(json));
+            },
+            "error": function (e) {
+                let json = "Ajax Error" + e.responseText;
+                $('#feedback').html(json);
+
+            }
+        });
+
+    });
+
+    $("#replayButtonService").click(function (event) {
+
+        event.preventDefault();
+
+        let dataPram = {}
+        dataPram["employeeId"] = $("#employeeId").val();
+        dataPram["layerType"] = "SERVICE";
         dataPram["customerId"] = $("#customerId2").val();
 
         $.ajax({

@@ -8,6 +8,7 @@ import lombok.Data;
 public class NotificationTemplate {
     private NotificationDTO notificationDTO;
     private int templateNumber;
+    private LayerType layerType;
 
     public void increaseValueByOne() {
         this.templateNumber = this.templateNumber + 1;

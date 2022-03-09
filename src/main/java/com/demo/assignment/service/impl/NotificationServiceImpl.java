@@ -59,12 +59,13 @@ public class NotificationServiceImpl implements NotificationService {
             Customer customer = customerRepository.findById(customerId);
             NotificationTemplate notificationTemplate = Constants.CURRENT_CUSTOMERS_PROCESS.get(customerId);
             NotificationDTO notificationDTO = notificationTemplate.getNotificationDTO();
-            notificationDTO.setBody(env.getProperty("demo.body" + notificationTemplate.getTemplateNumber()));
+            notificationDTO.setBody(env.getProperty("demo.body." + notificationTemplate.getLayerType().name().toLowerCase() + notificationTemplate.getTemplateNumber()));
             Notification notification = notificationDTO.getNotificationEntity(customer);
             notification.setLocalDateTime(LocalDateTime.now());
+            notification.setId(null);
             notificationRepository.save(notification);
             notificationTemplate.increaseValueByOne();
-            if(notificationTemplate.getTemplateNumber()>=4){
+            if (notificationTemplate.getTemplateNumber() >= 4) {
                 Constants.CURRENT_CUSTOMERS_PROCESS.remove(customerId);
             }
         }

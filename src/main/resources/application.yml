@@ -4,7 +4,7 @@ spring:
     username: root
     password: root
   tomcat:
-    max-wait: 20000
+    max-wait: 200001
     max-active: 50
     max-idle: 20
     min-idle: 15
@@ -24,8 +24,22 @@ fixedDelay:
   in:
     milliseconds: 20000
 demo:
-  body1: First Templet Hi how can i help you
-  body2: Second Templet do you still avaibale
-  body3: Third templet please let me know how can help you
-  reply: Thank you for your email the issue was solved
+  body:
+    default1: First Templet Hi how can i help you DEFAULT TEAM
+    default2: Second Templet do you still avaibale DEFAULT TEAM
+    default3: Third templet please let me know how can help you DEFAULT TEAM
+
+    support1: First Templet Hi how can i help you SUPPORT TEAM
+    support2: Second Templet do you still avaibale SUPPORT TEAM
+    support3: Third templet please let me know how can help you SUPPORT TEAM
+
+
+    service1: First Templet Hi how can i help you SERVICE TEAM
+    service2: Second Templet do you still avaibale SERVICE TEAM
+    service3: Third templet please let me know how can help you SERVICE TEAM
+
+  reply:
+   default: Thanks , for that support need DEFAULT Team
+   support: Thanks , for that support need SUPPORT Team
+   service: TThanks , for that support need SERVICE Team
 

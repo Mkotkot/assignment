@@ -6,4 +6,5 @@ import lombok.Data;
 public class AjaxRequestDTO {
     private Long employeeId;
     private Long customerId;
+    private String layerType;
 }
